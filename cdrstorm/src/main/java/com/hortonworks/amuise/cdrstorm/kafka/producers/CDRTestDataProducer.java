@@ -37,13 +37,6 @@ public class CDRTestDataProducer {
 
 
 
-    //Kafka Stuff
-    public final static String CDR_TOPIC = "cdr";
-    public final static String TWITTER_TOPIC = "twitter";
-    public static final String BROKER_LIST = "192.168.37.130:9092";
-    public static final String SERIALIZER = "kafka.serializer.StringEncoder";
-    public static final String REQUIRED_ACKS = "0";
-
     Properties globalconfigs;
 
     public CDRTestDataProducer() {
@@ -79,9 +72,17 @@ public class CDRTestDataProducer {
          */
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setOAuthConsumerKey(globalconfigs.getProperty("twitter4j.consumerkey"));
+        //System.out.println("consumer key: " + globalconfigs.getProperty("twitter4j.consumerkey"));
+        
         cb.setOAuthConsumerSecret(globalconfigs.getProperty("twitter4j.consumersecretkey"));
+        //System.out.println("consumer secret key: " + globalconfigs.getProperty("twitter4j.consumersecretkey"));
+        
         cb.setOAuthAccessToken(globalconfigs.getProperty("twitter4j.accesstokenkey"));
+        //System.out.println("access token key: " + globalconfigs.getProperty("twitter4j.accesstokenkey"));
+        
         cb.setOAuthAccessTokenSecret(globalconfigs.getProperty("twitter4j.accesstokensecretkey"));
+        //System.out.println("access token secret key: " + globalconfigs.getProperty("twitter4j.accesstokensecretkey"));
+        
         cb.setJSONStoreEnabled(true);
         cb.setIncludeEntitiesEnabled(true);
 
