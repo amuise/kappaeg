@@ -56,7 +56,7 @@ public class CDRTestDataProducer {
 
     public static final String BROKER_LIST = "192.168.37.130:9092";
     public static final String SERIALIZER = "kafka.serializer.StringEncoder";
-
+    public static final String REQUIRED_ACKS = "0";
 
 
     Properties props = new Properties();
@@ -70,6 +70,7 @@ public class CDRTestDataProducer {
         Properties props = new Properties();
         props.put("metadata.broker.list", BROKER_LIST);
         props.put("serializer.class", SERIALIZER);
+        props.put("request.required.acks", REQUIRED_ACKS);
 
 
         ProducerConfig config = new ProducerConfig(props);
@@ -103,6 +104,7 @@ public class CDRTestDataProducer {
                 System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
 
                 KeyedMessage<String, String> data = new KeyedMessage<String, String>(TWITTER_TOPIC, DataObjectFactory.getRawJSON(status));
+                
                 producer.send(data);
 
             }
