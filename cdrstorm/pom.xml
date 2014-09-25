@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.hortonworks.amuise</groupId>
     <artifactId>cdrstorm</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.8</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,7 @@
         <log4j.version>1.2.17</log4j.version>
         <hdp.spark.version>1.1.0.2.1.5.0-695</hdp.spark.version>
         <scala.binary.version>2.10</scala.binary.version>
-
+        <twitter4j.version>3.0.5</twitter4j.version>
 
     </properties>
       
@@ -44,9 +44,6 @@
             <id>twitter4j.org</id>
             <name>twitter4j.org Repository</name>
             <url>http://twitter4j.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
         </repository>		
     </repositories>  
         
@@ -85,8 +82,8 @@
         <!-- Twitter4j Dependencies -->
         <dependency>
             <groupId>org.twitter4j</groupId>
-            <artifactId>twitter4j-core</artifactId>
-            <version>[4.0,)</version>
+            <artifactId>twitter4j-stream</artifactId>
+            <version>${twitter4j.version}</version>
         </dependency>
                         
                                         		

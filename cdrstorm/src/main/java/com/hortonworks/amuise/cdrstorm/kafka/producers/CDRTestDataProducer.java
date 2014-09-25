@@ -6,29 +6,153 @@
 package com.hortonworks.amuise.cdrstorm.kafka.producers;
 
 import java.util.Properties;
+
+import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
+import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.StatusListener;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
+import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.json.DataObjectFactory;
+
 /**
  *
- * @author adammuise
+ * @author adammuise 
+ * Twitter Producer inspired by:
+ *          https://github.com/NFLabs/kafka-twitter
+ * 
  */
 public class CDRTestDataProducer {
 
-    final static String zookeeper_url = "127.0.0.1:2181";
-    final static String kafka_url = "localhost";
-    final static int kafkaServerPort = 9092;
-    final static String cdr_topic = "cdr";
-    final static String twitter_topic = "twitter";
+    private static final Logger logger = LoggerFactory.getLogger(CDRTestDataProducer.class);
+
+    final static String CDR_TOPIC = "cdr";
+    final static String TWITTER_TOPIC = "twitter";
+
+    /**
+     * Information necessary for accessing the Twitter API
+     */
+    private TwitterStream twitterStream;
+
+    public static final String CONSUMER_KEY_KEY = "nHvIMHu64tv8Mzsce1QWgZE3M";
+    public static final String CONSUMER_SECRET_KEY = "UbtyI1aLlR8iDvg20G8tW8QBcNLSuB4vW1dIkg1hEDnAXvBvkD";
+    public static final String ACCESS_TOKEN_KEY = "14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx";
+    public static final String ACCESS_TOKEN_SECRET_KEY = "GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W";
+
+    public static final String BATCH_SIZE_KEY = "batchSize";
+    public static final long DEFAULT_BATCH_SIZE = 1000L;
+    public static final String KEYWORDS_KEY = "hadoop";
+
+
+    public static final String BROKER_LIST = "192.168.37.130:9092";
+    public static final String SERIALIZER = "kafka.serializer.StringEncoder";
+
+
 
     Properties props = new Properties();
     kafka.javaapi.producer.Producer<Integer, String> producer;
 
-    public CDRTestDataProducer() {
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("metadata.broker.list", "localhost:9092");
-        producer = new kafka.javaapi.producer.Producer<Integer, String>(new ProducerConfig(props));
+    private void start() {
 
+        /**
+         * Producer properties *
+         */
+        Properties props = new Properties();
+        props.put("metadata.broker.list", BROKER_LIST);
+        props.put("serializer.class", SERIALIZER);
+
+
+        ProducerConfig config = new ProducerConfig(props);
+
+        final Producer<String, String> producer = new Producer<String, String>(config);
+
+        /**
+         * Twitter properties *
+         */
+        ConfigurationBuilder cb = new ConfigurationBuilder();
+        cb.setOAuthConsumerKey(CONSUMER_KEY_KEY);
+        cb.setOAuthConsumerSecret(CONSUMER_SECRET_KEY);
+        cb.setOAuthAccessToken(ACCESS_TOKEN_KEY);
+        cb.setOAuthAccessTokenSecret(ACCESS_TOKEN_SECRET_KEY);
+        cb.setJSONStoreEnabled(true);
+        cb.setIncludeEntitiesEnabled(true);
+
+        twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+        final Map<String, String> headers = new HashMap<String, String>();
+
+        /**
+         * Twitter listener *
+         */
+        StatusListener listener = new StatusListener() {
+            // The onStatus method is executed every time a new tweet comes
+            // in.
+            public void onStatus(Status status) {
+                // The EventBuilder is used to build an event using the
+                // the raw JSON of a tweet
+                //logger.info(status.getUser().getScreenName() + ": " + status.getText());
+                System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+
+                KeyedMessage<String, String> data = new KeyedMessage<String, String>(TWITTER_TOPIC, DataObjectFactory.getRawJSON(status));
+                producer.send(data);
+
+            }
+
+            public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
+            }
+
+            public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
+            }
+
+            public void onScrubGeo(long userId, long upToStatusId) {
+            }
+
+            public void onException(Exception ex) {
+                System.out.println("General Exception: shutting down Twitter sample stream...");
+                System.out.println(ex.getMessage());
+                ex.printStackTrace();
+                twitterStream.shutdown();
+            }
+
+            public void onStallWarning(StallWarning warning) {
+            }
+        };
+
+        /**
+         * Bind the listener *
+         */
+        twitterStream.addListener(listener);
+        /**
+         * GOGOGO *
+         */
+        twitterStream.sample();
+
+        
+    }
+
+ 
+
+
+   
+
+    public static void main(String[] args) {
+        try {
+            System.out.println("Starting the CDRTestDataProducer...");
+            CDRTestDataProducer tp = new CDRTestDataProducer();
+            tp.start();
+
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
     }
 
 }
