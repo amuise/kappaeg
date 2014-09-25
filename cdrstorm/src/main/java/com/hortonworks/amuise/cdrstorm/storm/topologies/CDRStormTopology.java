@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.hortonworks.amuise.cdrstorm.storm;
+package com.hortonworks.amuise.cdrstorm.storm.topologies;
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
@@ -25,6 +25,8 @@ public class CDRStormTopology {
 
     public static void main(String[] args) throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
+        
+        
 
         builder.setSpout("word", new TestWordSpout(), 10);
 //    builder.setBolt("exclaim1", new ExclamationBolt(), 3).shuffleGrouping("word");
@@ -38,4 +40,9 @@ public class CDRStormTopology {
         StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
 
     }
+    
+    public void setupDebugBolt(TopologyBuilder bldr) {
+        return; 
+    }
+    
 }
