@@ -49,9 +49,6 @@ public class CDRTestDataProducer {
     public static final String ACCESS_TOKEN_KEY = "14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx";
     public static final String ACCESS_TOKEN_SECRET_KEY = "GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W";
 
-    public static final String BATCH_SIZE_KEY = "batchSize";
-    public static final long DEFAULT_BATCH_SIZE = 1000L;
-    public static final String KEYWORDS_KEY = "hadoop";
 
 
     public static final String BROKER_LIST = "192.168.37.130:9092";
@@ -65,7 +62,7 @@ public class CDRTestDataProducer {
     private void start() {
 
         /**
-         * Producer properties *
+         * Kafka Producer properties *
          */
         Properties props = new Properties();
         props.put("metadata.broker.list", BROKER_LIST);
@@ -78,7 +75,7 @@ public class CDRTestDataProducer {
         final Producer<String, String> producer = new Producer<String, String>(config);
 
         /**
-         * Twitter properties *
+         * Twitter4j properties *
          */
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setOAuthConsumerKey(CONSUMER_KEY_KEY);
@@ -89,7 +86,6 @@ public class CDRTestDataProducer {
         cb.setIncludeEntitiesEnabled(true);
 
         twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
-        final Map<String, String> headers = new HashMap<String, String>();
 
         /**
          * Twitter listener *
@@ -101,7 +97,7 @@ public class CDRTestDataProducer {
                 // The EventBuilder is used to build an event using the
                 // the raw JSON of a tweet
                 //logger.info(status.getUser().getScreenName() + ": " + status.getText());
-                System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+                //System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
 
                 KeyedMessage<String, String> data = new KeyedMessage<String, String>(TWITTER_TOPIC, DataObjectFactory.getRawJSON(status));
                 
@@ -129,13 +125,9 @@ public class CDRTestDataProducer {
             }
         };
 
-        /**
-         * Bind the listener *
-         */
+
         twitterStream.addListener(listener);
-        /**
-         * GOGOGO *
-         */
+
         twitterStream.sample();
 
     
@@ -149,8 +141,8 @@ public class CDRTestDataProducer {
     public static void main(String[] args) {
         try {
             System.out.println("Starting the CDRTestDataProducer...");
-            CDRTestDataProducer tp = new CDRTestDataProducer();
-            tp.start();
+            CDRTestDataProducer cdrtestgen = new CDRTestDataProducer();
+            cdrtestgen.start();
 
         } catch (Exception e) {
             logger.info(e.getMessage());
