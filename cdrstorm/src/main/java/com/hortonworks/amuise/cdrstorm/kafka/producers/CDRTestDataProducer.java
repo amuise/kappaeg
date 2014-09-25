@@ -97,7 +97,7 @@ public class CDRTestDataProducer {
                 // The EventBuilder is used to build an event using the
                 // the raw JSON of a tweet
                 //logger.info(status.getUser().getScreenName() + ": " + status.getText());
-                //System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+                System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
 
                 KeyedMessage<String, String> data = new KeyedMessage<String, String>(TWITTER_TOPIC, DataObjectFactory.getRawJSON(status));
                 
@@ -133,10 +133,6 @@ public class CDRTestDataProducer {
     
     }
 
- 
-
-
-   
 
     public static void main(String[] args) {
         try {
