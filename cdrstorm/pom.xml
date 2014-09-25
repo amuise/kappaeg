@@ -79,6 +79,26 @@
             </exclusions>
         </dependency>
    
+        
+   
+        <!-- Storm Kafka Dependencies -->
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-kafka</artifactId>
+            <version>${storm.kafka.version}</version>
+        </dependency>
+        
+        
+        		
+        <!-- Storm HDFS Dependencies -->
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-hdfs</artifactId>
+            <version>${storm.hdfs.version}</version>
+        </dependency>
+        
+        
+		
         <!-- Twitter4j Dependencies -->
         <dependency>
             <groupId>org.twitter4j</groupId>
@@ -87,21 +107,8 @@
         </dependency>
                         
                                         		
-        <!-- Storm Kafka Dependencies -->
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-kafka</artifactId>
-            <version>${storm.kafka.version}</version>
-        </dependency>
-		
-		
-        <!-- Storm HDFS Dependencies -->
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-hdfs</artifactId>
-            <version>${storm.hdfs.version}</version>
-        </dependency>
-        
+
+
         <!-- Spark Dependencies -->
         
         <dependency>
