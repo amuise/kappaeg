@@ -8,42 +8,51 @@ package com.hortonworks.amuise.cdrstorm.kafka.producers;
 import java.util.Properties;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 
 /**
  *
  * @author adammuise
  */
 public class SampleProducer extends Thread {
-    
-  private final kafka.javaapi.producer.Producer<Integer, String> producer;
-  private final String topic = "twitter";
-  private final Properties props = new Properties();
 
-  public SampleProducer()
-  {
-    props.put("serializer.class", "kafka.serializer.StringEncoder");
-    props.put("metadata.broker.list", "localhost:9092");
+    private final kafka.javaapi.producer.Producer<String, String> producer;
+    private final String topic = "test";
+    private final Properties props = new Properties();
+
+    public SampleProducer() {
+        
+
+        
+        props.put("serializer.class", "kafka.serializer.StringEncoder");
+        props.put("metadata.broker.list", "192.168.37.130:9092");
+        props.put("serializer.class", "kafka.serializer.StringEncoder");
+        props.put("request.required.acks","0");
     // Use random partitioner. Don't need the key type. Just set it to Integer.
-    // The message is of type String.
-    producer = new kafka.javaapi.producer.Producer<Integer, String>(new ProducerConfig(props));
+        // The message is of type String.
+        producer = new kafka.javaapi.producer.Producer<String, String>(new ProducerConfig(props));
 
-  }
-  
-  public void run() {
-    int messageNo = 1;
-    while(true)
-    {
-      String messageStr = new String("Message_" + messageNo);
-      producer.send(new KeyedMessage<Integer, String>(topic, messageStr));
-      messageNo++;
     }
-  }
-  
-    public static void main(String[] args)
-  {
-    SampleProducer producerThread = new SampleProducer();
-    producerThread.start();
 
-  }
-    
+    public void run() {
+        int messageNo = 1;
+        while (true) {
+            try {
+                String messageStr = new String("Message_" + messageNo);
+                producer.send(new KeyedMessage<String, String>(topic, messageStr));
+                messageNo++;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SampleProducer producerThread = new SampleProducer();
+        producerThread.start();
+
+    }
+
 }

@@ -71,18 +71,10 @@ public class CDRTestDataProducer {
          * Twitter4j properties *
          */
         ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setOAuthConsumerKey(globalconfigs.getProperty("twitter4j.consumerkey"));
-        //System.out.println("consumer key: " + globalconfigs.getProperty("twitter4j.consumerkey"));
-        
-        cb.setOAuthConsumerSecret(globalconfigs.getProperty("twitter4j.consumersecretkey"));
-        //System.out.println("consumer secret key: " + globalconfigs.getProperty("twitter4j.consumersecretkey"));
-        
-        cb.setOAuthAccessToken(globalconfigs.getProperty("twitter4j.accesstokenkey"));
-        //System.out.println("access token key: " + globalconfigs.getProperty("twitter4j.accesstokenkey"));
-        
+        cb.setOAuthConsumerKey(globalconfigs.getProperty("twitter4j.consumerkey"));   
+        cb.setOAuthConsumerSecret(globalconfigs.getProperty("twitter4j.consumersecretkey")); 
+        cb.setOAuthAccessToken(globalconfigs.getProperty("twitter4j.accesstokenkey"));        
         cb.setOAuthAccessTokenSecret(globalconfigs.getProperty("twitter4j.accesstokensecretkey"));
-        //System.out.println("access token secret key: " + globalconfigs.getProperty("twitter4j.accesstokensecretkey"));
-        
         cb.setJSONStoreEnabled(true);
         cb.setIncludeEntitiesEnabled(true);
 
@@ -103,6 +95,10 @@ public class CDRTestDataProducer {
                 KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), DataObjectFactory.getRawJSON(status));
 
                 twitterproducer.send(twitterdata);
+                
+                //call CDR create message
+                
+                //call producer to cdr
 
             }
 
