@@ -28,9 +28,8 @@ public class SampleProducer extends Thread {
         props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("metadata.broker.list", "192.168.37.130:9092");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("request.required.acks","0");
-    // Use random partitioner. Don't need the key type. Just set it to Integer.
-        // The message is of type String.
+        props.put("request.required.acks","1");
+
         producer = new kafka.javaapi.producer.Producer<String, String>(new ProducerConfig(props));
 
     }

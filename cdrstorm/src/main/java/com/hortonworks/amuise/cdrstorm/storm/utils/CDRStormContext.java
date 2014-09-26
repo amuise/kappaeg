@@ -26,6 +26,7 @@ public class CDRStormContext {
         configcontext.put("twitter4j.consumersecretkey","7edLC5k2Wbz1TYMoeJL4OETgkntZa9r3XSyEeV2rFuqhbRFuRf");
         configcontext.put("twitter4j.accesstokenkey","14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx");
         configcontext.put("twitter4j.accesstokensecretkey","GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W");
+        configcontext.put("twitter4j.filterwords","hadoop,hdfs,tez,hive,oozie,flume,kafka,mapreduce,knox,hortonworks");
         configcontext.put("twitter4j.kafkatopic","twitter");
         configcontext.put("twitter4j.brokerlist","192.168.37.130:9092");
         configcontext.put("twitter4j.serializer","kafka.serializer.StringEncoder");

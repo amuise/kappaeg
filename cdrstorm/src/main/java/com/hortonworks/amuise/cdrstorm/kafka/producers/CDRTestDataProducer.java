@@ -6,6 +6,8 @@
 package com.hortonworks.amuise.cdrstorm.kafka.producers;
 
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import kafka.javaapi.producer.Producer;
@@ -14,6 +16,7 @@ import kafka.producer.ProducerConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import twitter4j.FilterQuery;
 
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -34,8 +37,6 @@ public class CDRTestDataProducer {
 
     private static final Logger logger = LoggerFactory.getLogger(CDRTestDataProducer.class);
     private TwitterStream twitterStream;
-
-
 
     Properties globalconfigs;
 
@@ -71,9 +72,9 @@ public class CDRTestDataProducer {
          * Twitter4j properties *
          */
         ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setOAuthConsumerKey(globalconfigs.getProperty("twitter4j.consumerkey"));   
-        cb.setOAuthConsumerSecret(globalconfigs.getProperty("twitter4j.consumersecretkey")); 
-        cb.setOAuthAccessToken(globalconfigs.getProperty("twitter4j.accesstokenkey"));        
+        cb.setOAuthConsumerKey(globalconfigs.getProperty("twitter4j.consumerkey"));
+        cb.setOAuthConsumerSecret(globalconfigs.getProperty("twitter4j.consumersecretkey"));
+        cb.setOAuthAccessToken(globalconfigs.getProperty("twitter4j.accesstokenkey"));
         cb.setOAuthAccessTokenSecret(globalconfigs.getProperty("twitter4j.accesstokensecretkey"));
         cb.setJSONStoreEnabled(true);
         cb.setIncludeEntitiesEnabled(true);
@@ -90,16 +91,23 @@ public class CDRTestDataProducer {
                 // The EventBuilder is used to build an event using the
                 // the raw JSON of a tweet
                 //logger.info(status.getUser().getScreenName() + ": " + status.getText());
-                System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+                //System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+
+                System.out.println("_________________________________________________________");
+                System.out.println("Tweet user|" + status.getUser().getScreenName());
+                //System.out.println("Tweet geoLocationHashCode|" + status.getGeoLocation().hashCode());
+                System.out.println("Tweet createdAt|" + status.getCreatedAt());
+                //System.out.println("Tweet place|" + status.getPlace().getFullName());
+                System.out.println("Tweet retweetCount|" + status.getRetweetCount());
+                System.out.println("Tweet source|" + status.getSource());
+                System.out.println("Tweet text|" + status.getText());
+                System.out.println("_________________________________________________________");
 
                 KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), DataObjectFactory.getRawJSON(status));
 
-                twitterproducer.send(twitterdata);
-                
+                //twitterproducer.send(twitterdata);
                 //call CDR create message
-                
                 //call producer to cdr
-
             }
 
             public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
@@ -124,8 +132,13 @@ public class CDRTestDataProducer {
 
         twitterStream.addListener(listener);
 
-        twitterStream.sample();
+        // Filter stream with targeted words
+        String filterstring = globalconfigs.getProperty("twitter4j.filterwords");
+        FilterQuery filterq = new FilterQuery();        
+        filterq.track(filterstring.split(","));
+        twitterStream.filter(filterq);
 
+        //twitterStream.sample();
     }
 
     public static void main(String[] args) {
