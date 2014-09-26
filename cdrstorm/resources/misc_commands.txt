@@ -1,3 +1,14 @@
-./kafka-topics.sh  --zookeeper localhost:2181 --create --topic twitter --partitions 3 --replication-factor 1
+#Start Kafka
+./kafka-server-start.sh -daemon ../config/server.properties
 
+
+#Create topics and confirm
+./kafka-topics.sh  --zookeeper localhost:2181 --create --topic twitter --partitions 3 --replication-factor 1
+./kafka-topics.sh --zookeeper localhost:2181 --describe --topic twitter
+
+./kafka-topics.sh  --zookeeper localhost:2181 --create --topic cdr --partitions 3 --replication-factor 1
+./kafka-topics.sh --zookeeper localhost:2181 --describe --topic cdr
+
+
+#Start the sample data streams (this is both CDR and Twitter feeds)
 java -cp ./cdrstorm-0.8.jar com.hortonworks.amuise.cdrstorm.kafka.producers.CDRTestDataProducer
