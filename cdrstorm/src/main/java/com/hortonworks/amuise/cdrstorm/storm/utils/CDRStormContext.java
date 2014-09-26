@@ -36,8 +36,7 @@ public class CDRStormContext {
                 + "createdat,"
                 + "retweetcount,"
                 + "source,"
-                + "text,"
-                + "rawjson");
+                + "text");
 
         //Kafka Spout info
         configcontext.put("cdrstorm.kafkaspout.zkhosts", "localhost:2181");

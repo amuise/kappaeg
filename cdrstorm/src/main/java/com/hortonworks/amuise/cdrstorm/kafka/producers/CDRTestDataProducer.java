@@ -99,8 +99,6 @@ public class CDRTestDataProducer {
                 sb.append(status.getSource());
                 sb.append("|");
                 sb.append(status.getText());
-                sb.append("|");
-                sb.append(DataObjectFactory.getRawJSON(status));
 
                 //call CDR create message
                 String cdrmessage = createCDRMessage(status.getText());

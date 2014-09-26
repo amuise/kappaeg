@@ -29,36 +29,22 @@ public class TwitterScheme implements Scheme {
 
     @Override
     public List<Object> deserialize(byte[] bytes) {
-        List<Object> tvals = new ArrayList<Object>();
-        logger.debug("TwitterScheme Bytes.toString: " + bytes.toString());
-        
+        List<Object> tvals = new ArrayList();
+        String payload = "";
         try {
-            String payload = new String(bytes, "UTF-8");
-            logger.debug("TwitterScheme payload (from Stirng constructor): " + payload);
-            String[] items = payload.split("\\|");
-
-            for (String item : items) {
-                tvals.add(item);
-            }
-
+            payload = new String(bytes, "UTF-8");
         } catch (Exception e) {
-            return tvals;
+            tvals.add("BAD");
         }
-
+        tvals.add(payload);
         return tvals;
     }
 
     @Override
     public Fields getOutputFields() {
-        List<String> predefinedScheme = new ArrayList<String>();
-        String[] fields = globalconfigs.getProperty("twitter4j.schema").split(",");
-        for (String field : fields) {
-            predefinedScheme.add(field);
-        }
 
-        Fields tSchemeFields = new Fields(predefinedScheme);
-
-        return tSchemeFields;
+        return new Fields("Tweet");
+        
     }
 
 }
