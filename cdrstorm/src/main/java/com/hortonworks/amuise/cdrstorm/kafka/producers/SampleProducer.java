@@ -8,8 +8,6 @@ package com.hortonworks.amuise.cdrstorm.kafka.producers;
 import java.util.Properties;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 
 /**
  *
@@ -22,13 +20,10 @@ public class SampleProducer extends Thread {
     private final Properties props = new Properties();
 
     public SampleProducer() {
-        
 
-        
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("metadata.broker.list", "192.168.37.130:9092");
         props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("request.required.acks","1");
+        props.put("request.required.acks", "1");
 
         producer = new kafka.javaapi.producer.Producer<String, String>(new ProducerConfig(props));
 

@@ -6,12 +6,11 @@
 package com.hortonworks.amuise.cdrstorm.kafka.producers;
 
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
+import com.hortonworks.amuise.cdrstorm.storm.utils.Toolbox;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 import org.slf4j.Logger;
@@ -88,26 +87,35 @@ public class CDRTestDataProducer {
             // The onStatus method is executed every time a new tweet comes
             // in.
             public void onStatus(Status status) {
-                // The EventBuilder is used to build an event using the
-                // the raw JSON of a tweet
-                //logger.info(status.getUser().getScreenName() + ": " + status.getText());
-                //System.out.println("Tweet|" + status.getUser().getScreenName() + ": " + status.getText() + "|");
+
+                StringBuilder sb = new StringBuilder();
+                sb.append(status.getUser().getScreenName());
+                sb.append("|");
+                sb.append(status.getCreatedAt());
+                sb.append("|");
+                sb.append(status.getRetweetCount());
+                sb.append("|");
+                sb.append(status.getSource());
+                sb.append("|");
+                sb.append(status.getText());
+                sb.append("|");
+                sb.append(DataObjectFactory.getRawJSON(status));
 
                 System.out.println("_________________________________________________________");
-                System.out.println("Tweet user|" + status.getUser().getScreenName());
-                //System.out.println("Tweet geoLocationHashCode|" + status.getGeoLocation().hashCode());
-                System.out.println("Tweet createdAt|" + status.getCreatedAt());
-                //System.out.println("Tweet place|" + status.getPlace().getFullName());
-                System.out.println("Tweet retweetCount|" + status.getRetweetCount());
-                System.out.println("Tweet source|" + status.getSource());
-                System.out.println("Tweet text|" + status.getText());
+                System.out.println(sb.toString());
                 System.out.println("_________________________________________________________");
 
-                KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), DataObjectFactory.getRawJSON(status));
-
-                //twitterproducer.send(twitterdata);
+                /*
+                KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), sb.toString());
+                twitterproducer.send(twitterdata);
+                
+                
                 //call CDR create message
+                String cdrmessage = createCDRMessage(status.getText());
                 //call producer to cdr
+                KeyedMessage<String, String> cdrmessagedata = new KeyedMessage<String, String>(globalconfigs.getProperty("cdr.kafkatopic"), sb.toString());
+                cdrproducer.send(cdrmessagedata);
+                */        
             }
 
             public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
@@ -134,7 +142,7 @@ public class CDRTestDataProducer {
 
         // Filter stream with targeted words
         String filterstring = globalconfigs.getProperty("twitter4j.filterwords");
-        FilterQuery filterq = new FilterQuery();        
+        FilterQuery filterq = new FilterQuery();
         filterq.track(filterstring.split(","));
         twitterStream.filter(filterq);
 
@@ -150,6 +158,16 @@ public class CDRTestDataProducer {
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
+    }
+    
+    private String createCDRMessage(String rawTweetText) {
+        
+        Toolbox tb = new Toolbox();
+        ArrayList<String> urls = tb.extractURLfromString(rawTweetText);
+        
+        
+        
+        return null;
     }
 
 }
