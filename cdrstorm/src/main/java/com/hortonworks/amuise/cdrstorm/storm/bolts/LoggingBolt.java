@@ -23,7 +23,7 @@ public class LoggingBolt implements IRichBolt {
     	private static final Logger logger = Logger.getLogger(LoggingBolt.class);
 	
 	private OutputCollector outputcollector;
-	private Properties conf;
+
     
     @Override
     public void declareOutputFields(OutputFieldsDeclarer ofd) {

@@ -40,6 +40,9 @@ public class CDRStormContext {
         configcontext.put("cdrstorm.kafkaspout.spout.thread.count", "1");
         configcontext.put("cdrstorm.kafkaspout.bolt.thread.count", "2");
 
+        //Storm config
+        configcontext.put("cdrstorm.topologyworkers","4");
+        
         //CDR Test Data Producer 
         configcontext.put("cdr.kafkatopic", "cdr");
         configcontext.put("cdr.brokerlist", "localhost:9092");

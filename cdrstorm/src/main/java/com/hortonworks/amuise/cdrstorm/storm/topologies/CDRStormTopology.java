@@ -5,13 +5,17 @@
  */
 package com.hortonworks.amuise.cdrstorm.storm.topologies;
 
+import backtype.storm.Config;
+import backtype.storm.StormSubmitter;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
+import com.hortonworks.amuise.cdrstorm.storm.bolts.LoggingBolt;
 import com.hortonworks.amuise.cdrstorm.storm.spouts.CDRScheme;
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
 import java.util.Properties;
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;
+import static storm.kafka.KafkaSpout.LOG;
 import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
 
@@ -29,12 +33,28 @@ public class CDRStormTopology {
 
     }
 
-    public void setupDebugBolt(TopologyBuilder bldr) {
-        return;
+    public void setupLoggingBolts(TopologyBuilder bldr) {
+        /*
+         DebugBolt netFlowDebugBolt = new DebugBolt(topologyConfig);
+         builder.setBolt("netflow_debug_bolt", netFlowDebugBolt, 4).shuffleGrouping("netflowKafkaSpout");
+         DebugBolt radiusDebugBolt = new DebugBolt(topologyConfig);
+         builder.setBolt("radius_debug_bolt", radiusDebugBolt, 4).shuffleGrouping("radiusKafkaSpout");
+         */
+
+        LoggingBolt cdrLoggingBolt = new LoggingBolt();
+        bldr.setBolt("cdrLoggingBolt", cdrLoggingBolt, 4).shuffleGrouping("cdrKafkaSpout");
+
+        LoggingBolt twitterLoggingBolt = new LoggingBolt();
+        bldr.setBolt("twitterLoggingBolt", twitterLoggingBolt, 4).shuffleGrouping("twitterKafkaSpout");
+
     }
 
     public void setupTwitterSpout(TopologyBuilder bldr) {
+        KafkaSpout kafkaSpout = constructTwitterKafkaSpout();
 
+        int spoutCount = Integer.valueOf(globalconfigs.getProperty("cdrstorm.kafkaspout.spout.thread.count"));
+
+        bldr.setSpout("twitterKafkaSpout", kafkaSpout, spoutCount);
     }
 
     public void setupCDRSpout(TopologyBuilder bldr) {
@@ -56,15 +76,49 @@ public class CDRStormTopology {
         return kafkaspout;
     }
 
+    private KafkaSpout constructTwitterKafkaSpout() {
+        BrokerHosts zkhosts = new ZkHosts(globalconfigs.getProperty("cdrstorm.kafkaspout.zkhosts"));
+        String topic = globalconfigs.getProperty("twitter4j.kafkatopic");
+        String zkRoot = globalconfigs.getProperty("cdrstorm.kafkaspout.zkroot");
+        String consumerGroupId = globalconfigs.getProperty("cdrstorm.kafkaspout.cdr.consumergroupid");
+        SpoutConfig spoutConfig = new SpoutConfig(zkhosts, topic, zkRoot, consumerGroupId);
+        spoutConfig.scheme = new SchemeAsMultiScheme(new CDRScheme());
+        KafkaSpout kafkaspout = new KafkaSpout(spoutConfig);
+        return kafkaspout;
+    }
+
     private void buildAndSubmitTopology() throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
+
         setupCDRSpout(builder);
+
+        setupTwitterSpout(builder);
+
+        setupLoggingBolts(builder);
+
+        //submit
+        /* This conf is for Storm and it needs be configured with things like the following:
+         * 	Zookeeper server, nimbus server, ports, etc... All of this configuration will be picked up
+         * in the ~/.storm/storm.yaml file that will be located on each storm node.
+         */
+        Config conf = new Config();
+        conf.setDebug(true);
+        /* Set the number of workers that will be spun up for this topology. 
+         * Each worker represents a JVM where executor thread will be spawned from */
+        Integer topologyWorkers = Integer.valueOf("cdrstorm.topologyworkers");
+        conf.put(Config.TOPOLOGY_WORKERS, topologyWorkers);
+
+        try {
+            StormSubmitter.submitTopology("cdrstorm", conf, builder.createTopology());
+        } catch (Exception e) {
+            LOG.error("Error submiting Topology", e);
+        }
     }
 
     public static void main(String[] args) {
         CDRStormTopology cdrstorm = new CDRStormTopology();
         try {
-        cdrstorm.buildAndSubmitTopology();
+            cdrstorm.buildAndSubmitTopology();
         } catch (Exception e) {
             System.out.println("Error starting topology: " + e.getMessage());
             e.printStackTrace();
