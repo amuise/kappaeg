@@ -30,7 +30,7 @@ public class TwitterScheme implements Scheme {
     @Override
     public List<Object> deserialize(byte[] bytes) {
         List<Object> tvals = new ArrayList<Object>();
-        logger.debug("CDRScheme Bytes.toString: " + bytes.toString());
+        logger.debug("TwitterScheme Bytes.toString: " + bytes.toString());
         
         try {
             String payload = new String(bytes, "UTF-8");

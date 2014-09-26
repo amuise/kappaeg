@@ -11,12 +11,12 @@ import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import com.hortonworks.amuise.cdrstorm.storm.bolts.LoggingBolt;
 import com.hortonworks.amuise.cdrstorm.storm.spouts.CDRScheme;
+import com.hortonworks.amuise.cdrstorm.storm.spouts.TwitterScheme;
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;
-import static storm.kafka.KafkaSpout.LOG;
 import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
 
@@ -80,7 +80,7 @@ public class CDRStormTopology {
         SpoutConfig spoutConfig = new SpoutConfig(zkhosts, topic, zkRoot, consumerGroupId);
         
         //Create scheme for Twitter
-        spoutConfig.scheme = new SchemeAsMultiScheme(new CDRScheme());
+        spoutConfig.scheme = new SchemeAsMultiScheme(new TwitterScheme());
         
         KafkaSpout kafkaspout = new KafkaSpout(spoutConfig);
         return kafkaspout;
