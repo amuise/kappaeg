@@ -53,15 +53,6 @@ public class Toolbox {
         return null;
     }
 
-    public static void main(String[] args) {
-
-        String raw = "Elephant on the mainframe - #Hadoop and #BigData - get beyond all the hype, a good read http://t.co/uTxSamWnVM";
-        ArrayList<String> urls = extractURLfromString(raw);
-        for (String url : urls) {
-            System.out.println("domain found: " + stripProtocolPrefix(url));
-        }
-    }
-
     public static String fullURL(String anyURL) throws IOException {
         URL url = new URL(anyURL);
         HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);
@@ -70,6 +61,20 @@ public class Toolbox {
         httpURLConnection.disconnect();
 
         return finalURL;
+    }
+
+    public static void main(String[] args) {
+
+        String raw = "Elephant on the mainframe - #Hadoop and #BigData - get beyond all the hype, a good read http://t.co/uTxSamWnVM blah blah lasdkfas;ldfj w;lek, asd  http://t.co/idwsqk8q1i alskdf;ajlsd  http://t.co/QZyU1q9xOD lasjdflaskfdj ";
+        ArrayList<String> urls = extractURLfromString(raw);
+        try {
+            for (String url : urls) {
+                System.out.println("full URL: " + fullURL(url));
+                System.out.println("domain found: " + stripProtocolPrefix(fullURL(url)));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
