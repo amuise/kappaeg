@@ -164,7 +164,7 @@ public class CDRTestDataProducer {
         
         Toolbox tb = new Toolbox();
         ArrayList<String> urls = tb.extractURLfromString(rawTweetText);
-        
+        StringBuilder cdr = new StringBuilder();
         
         
         return null;

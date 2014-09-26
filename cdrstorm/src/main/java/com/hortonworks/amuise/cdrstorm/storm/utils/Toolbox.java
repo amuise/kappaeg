@@ -5,6 +5,7 @@
  */
 package com.hortonworks.amuise.cdrstorm.storm.utils;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -35,4 +36,16 @@ public class Toolbox {
         return urls;
     }
 
+    public String stripProtocolPrefix(String input) {
+
+        try {
+            URI uri = new URI(input.toLowerCase().trim());
+            String domain = uri.getHost();
+            return domain.startsWith("www.") ? domain.substring(4) : domain;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

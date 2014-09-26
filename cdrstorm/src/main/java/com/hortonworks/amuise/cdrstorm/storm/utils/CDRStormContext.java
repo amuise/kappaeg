@@ -22,24 +22,62 @@ public class CDRStormContext {
         Properties configcontext = new Properties();
 
         //Twitter4j Producer 
-        configcontext.put("twitter4j.consumerkey","y4g8s2B7h0Wun80BIoEoriIMT");
-        configcontext.put("twitter4j.consumersecretkey","7edLC5k2Wbz1TYMoeJL4OETgkntZa9r3XSyEeV2rFuqhbRFuRf");
-        configcontext.put("twitter4j.accesstokenkey","14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx");
-        configcontext.put("twitter4j.accesstokensecretkey","GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W");
-        configcontext.put("twitter4j.filterwords","hadoop,hdfs,tez,hive,oozie,flume,kafka,mapreduce,knox,hortonworks");
-        configcontext.put("twitter4j.kafkatopic","twitter");
-        configcontext.put("twitter4j.brokerlist","192.168.37.130:9092");
-        configcontext.put("twitter4j.serializer","kafka.serializer.StringEncoder");
-        configcontext.put("twitter4j.requiredacks","1");
-        
-        //CDR Test Data Producer
-        configcontext.put("cdr.kafkatopic","cdr");
-        configcontext.put("cdr.brokerlist","192.168.37.130:9092");
-        configcontext.put("cdr.serializer","kafka.serializer.StringEncoder");
-        configcontext.put("cdr.requiredacks","1");
+        configcontext.put("twitter4j.consumerkey", "y4g8s2B7h0Wun80BIoEoriIMT");
+        configcontext.put("twitter4j.consumersecretkey", "7edLC5k2Wbz1TYMoeJL4OETgkntZa9r3XSyEeV2rFuqhbRFuRf");
+        configcontext.put("twitter4j.accesstokenkey", "14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx");
+        configcontext.put("twitter4j.accesstokensecretkey", "GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W");
+        configcontext.put("twitter4j.filterwords", "hadoop,hdfs,tez,hive,oozie,flume,kafka,mapreduce,knox,hortonworks");
+        configcontext.put("twitter4j.kafkatopic", "twitter");
+        configcontext.put("twitter4j.brokerlist", "192.168.37.130:9092");
+        configcontext.put("twitter4j.serializer", "kafka.serializer.StringEncoder");
+        configcontext.put("twitter4j.requiredacks", "1");
 
+        //CDR Test Data Producer
+        configcontext.put("cdr.kafkatopic", "cdr");
+        configcontext.put("cdr.brokerlist", "192.168.37.130:9092");
+        configcontext.put("cdr.serializer", "kafka.serializer.StringEncoder");
+        configcontext.put("cdr.requiredacks", "1");
+        configcontext.put("cdr.schema", "      subscriber_no  ,"
+                + "      subscriber_no_char,"
+                + "      record_sequence_number,"
+                + "      gprs_choice_mask_archive,"
+                + "      served_imsi,"
+                + "      record_opening_time,"
+                + "      served_msisdn,"
+                + "      data_volume_uplink_archive,"
+                + "      data_volume_downlink_archive,"
+                + "      routing_area,"
+                + "      location_area_code,"
+                + "      access_point_name,"
+                + "      time_key,"
+                + "      switch_id,"
+                + "      reporting_centre_id,"
+                + "      eng_date_id,"
+                + "      audit_key,"
+                + "      destination_url,"
+                + "      spid,"
+                + "      service_class_group,"
+                + "      content_delivered,"
+                + "      event_protocol_type,"
+                + "      wireless_generation,"
+                + "      event_count,"
+                + "      domain_1,"
+                + "      cdr_type_ind,"
+                + "      served_imei,"
+                + "      sgsn_address,"
+                + "      served_pdp_address,"
+                + "      plmn_id,"
+                + "      duration,"
+                + "      charging_id,"
+                + "      cell_id,"
+                + "      customer_type,"
+                + "      monum,"
+                + "      tracking_area_code,"
+                + "      eutran_cellid,"
+                + "      record_opening_date");
+        
         this.config = configcontext;
-                
+
     }
 
 }
