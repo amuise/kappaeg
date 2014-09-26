@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import kafka.javaapi.producer.Producer;
+import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 import org.slf4j.Logger;
@@ -101,21 +102,23 @@ public class CDRTestDataProducer {
                 sb.append("|");
                 sb.append(DataObjectFactory.getRawJSON(status));
 
-                System.out.println("_________________________________________________________");
-                System.out.println(sb.toString());
-                System.out.println("_________________________________________________________");
-
-                /*
-                KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), sb.toString());
-                twitterproducer.send(twitterdata);
-                
-                
                 //call CDR create message
                 String cdrmessage = createCDRMessage(status.getText());
-                //call producer to cdr
+
+                //Debug output
+                System.out.println("_________________________________________________________");
+                System.out.println(sb.toString());
+                System.out.println("cdr message: " + cdrmessage);
+                System.out.println("_________________________________________________________");
+
+                //call producer for tweet
+                KeyedMessage<String, String> twitterdata = new KeyedMessage<String, String>(globalconfigs.getProperty("twitter4j.kafkatopic"), sb.toString());
+                twitterproducer.send(twitterdata);
+
+                //call producer for cdr
                 KeyedMessage<String, String> cdrmessagedata = new KeyedMessage<String, String>(globalconfigs.getProperty("cdr.kafkatopic"), sb.toString());
                 cdrproducer.send(cdrmessagedata);
-                */        
+
             }
 
             public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
@@ -159,15 +162,53 @@ public class CDRTestDataProducer {
             logger.info(e.getMessage());
         }
     }
-    
+
     private String createCDRMessage(String rawTweetText) {
-        
-        Toolbox tb = new Toolbox();
-        ArrayList<String> urls = tb.extractURLfromString(rawTweetText);
+        /*
+         We construct a CDR message from a billing/truncated CDR record. 
+         Realistically, the raw records would have many more fields and would 
+         likely be in ASN-1 format. This is sufficient to illustrate a use case
+         In order to keep the data set less obviously deterministic,
+         we flip a weighted coin to see if we insert the URL from the tweet.
+         We fill the dataset with random data as we are only interested in the 
+         domain. We can generate more realistic data if the use case expands.
+         */
+
+        String defaultURL = "http://www.hortonworks.com";
+        String firstURLFromTweet;
+        String filler;
+        double seed = Math.random();
+        boolean insertValidURL = (seed > 0.2);
         StringBuilder cdr = new StringBuilder();
-        
-        
-        return null;
+
+        //Get urls if present in tweet, otherwise use a default URL
+        ArrayList<String> urlsFromTweet = Toolbox.extractURLfromString(rawTweetText);
+        firstURLFromTweet = !urlsFromTweet.isEmpty() ? urlsFromTweet.get(0) : defaultURL;
+
+        //create filler field. will use for all fields except domain (for now)
+        filler = Double.toString(seed);
+
+        //go through the cdr schema and populate the correct number of dummy
+        //values based on the schema csv list. Only fill in a url for domain
+        //if the coin flip was true. Build a bar-separated string.
+        String cdrschemastring = globalconfigs.getProperty("cdr.schema");
+        String[] schemaitems = cdrschemastring.split(",");
+        int i = 0;
+        for (String recordtype : schemaitems) {
+            if (i > 0) {
+                cdr.append("|");
+            }
+            if (recordtype.equals("domain")) {
+                String domainval = insertValidURL ? firstURLFromTweet : defaultURL;
+                cdr.append(domainval);
+            } else {
+                cdr.append(filler);
+            }
+            i++;
+
+        }
+
+        return cdr.toString();
     }
 
 }
