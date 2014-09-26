@@ -32,6 +32,12 @@ public class CDRStormContext {
         configcontext.put("twitter4j.brokerlist", "localhost:9092");
         configcontext.put("twitter4j.serializer", "kafka.serializer.StringEncoder");
         configcontext.put("twitter4j.requiredacks", "1");
+        configcontext.put("twitter4j.schema", "screenname,"
+                + "createdat,"
+                + "retweetcount,"
+                + "source,"
+                + "text,"
+                + "rawjson");
 
         //Kafka Spout info
         configcontext.put("cdrstorm.kafkaspout.zkhosts", "localhost:2181");
@@ -41,8 +47,8 @@ public class CDRStormContext {
         configcontext.put("cdrstorm.kafkaspout.bolt.thread.count", "2");
 
         //Storm config
-        configcontext.put("cdrstorm.topologyworkers","4");
-        
+        configcontext.put("cdrstorm.topologyworkers", "4");
+
         //CDR Test Data Producer 
         configcontext.put("cdr.kafkatopic", "cdr");
         configcontext.put("cdr.brokerlist", "localhost:9092");

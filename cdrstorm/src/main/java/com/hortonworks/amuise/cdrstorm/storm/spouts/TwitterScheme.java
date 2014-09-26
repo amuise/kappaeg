@@ -7,7 +7,6 @@ package com.hortonworks.amuise.cdrstorm.storm.spouts;
 
 import backtype.storm.spout.Scheme;
 import backtype.storm.tuple.Fields;
-import com.hortonworks.amuise.cdrstorm.storm.bolts.LoggingBolt;
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,49 +17,48 @@ import org.apache.log4j.Logger;
  *
  * @author adammuise
  */
-public class CDRScheme implements Scheme {
+public class TwitterScheme implements Scheme {
 
+    private static final Logger logger = Logger.getLogger(TwitterScheme.class);
     Properties globalconfigs;
-    private static final Logger logger = Logger.getLogger(CDRScheme.class);
 
-    public CDRScheme() {
+    public TwitterScheme() {
         CDRStormContext ctx = new CDRStormContext();
         this.globalconfigs = ctx.config;
     }
 
     @Override
     public List<Object> deserialize(byte[] bytes) {
-
-        List<Object> cdrvals = new ArrayList<Object>();
+        List<Object> tvals = new ArrayList<Object>();
         logger.debug("CDRScheme Bytes.toString: " + bytes.toString());
         
         try {
             String payload = new String(bytes, "UTF-8");
-            logger.debug("CDRScheme payload (from Stirng constructor): " + payload);
+            logger.debug("TwitterScheme payload (from Stirng constructor): " + payload);
             String[] items = payload.split("\\|");
 
             for (String item : items) {
-                cdrvals.add(item);
+                tvals.add(item);
             }
 
         } catch (Exception e) {
-            return cdrvals;
+            return tvals;
         }
 
-        return cdrvals;
+        return tvals;
     }
 
     @Override
     public Fields getOutputFields() {
-        List<String> predefinedCDRScheme = new ArrayList<String>();
-        String[] cdrFields = globalconfigs.getProperty("cdr.schema").split(",");
-        for (String field : cdrFields) {
-            predefinedCDRScheme.add(field);
+        List<String> predefinedScheme = new ArrayList<String>();
+        String[] fields = globalconfigs.getProperty("twitter4j.schema").split(",");
+        for (String field : fields) {
+            predefinedScheme.add(field);
         }
 
-        Fields cdrSchemeFields = new Fields(predefinedCDRScheme);
+        Fields tSchemeFields = new Fields(predefinedScheme);
 
-        return cdrSchemeFields;
+        return tSchemeFields;
     }
 
 }

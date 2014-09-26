@@ -13,6 +13,7 @@ import com.hortonworks.amuise.cdrstorm.storm.bolts.LoggingBolt;
 import com.hortonworks.amuise.cdrstorm.storm.spouts.CDRScheme;
 import com.hortonworks.amuise.cdrstorm.storm.utils.CDRStormContext;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;
 import static storm.kafka.KafkaSpout.LOG;
@@ -26,6 +27,7 @@ import storm.kafka.ZkHosts;
 public class CDRStormTopology {
 
     Properties globalconfigs;
+        private static final Logger logger = Logger.getLogger(CDRStormTopology.class);
 
     public CDRStormTopology() {
         CDRStormContext cdrstormcontext = new CDRStormContext();
@@ -34,12 +36,6 @@ public class CDRStormTopology {
     }
 
     public void setupLoggingBolts(TopologyBuilder bldr) {
-        /*
-         DebugBolt netFlowDebugBolt = new DebugBolt(topologyConfig);
-         builder.setBolt("netflow_debug_bolt", netFlowDebugBolt, 4).shuffleGrouping("netflowKafkaSpout");
-         DebugBolt radiusDebugBolt = new DebugBolt(topologyConfig);
-         builder.setBolt("radius_debug_bolt", radiusDebugBolt, 4).shuffleGrouping("radiusKafkaSpout");
-         */
 
         LoggingBolt cdrLoggingBolt = new LoggingBolt();
         bldr.setBolt("cdrLoggingBolt", cdrLoggingBolt, 4).shuffleGrouping("cdrKafkaSpout");
@@ -82,7 +78,10 @@ public class CDRStormTopology {
         String zkRoot = globalconfigs.getProperty("cdrstorm.kafkaspout.zkroot");
         String consumerGroupId = globalconfigs.getProperty("cdrstorm.kafkaspout.cdr.consumergroupid");
         SpoutConfig spoutConfig = new SpoutConfig(zkhosts, topic, zkRoot, consumerGroupId);
+        
+        //Create scheme for Twitter
         spoutConfig.scheme = new SchemeAsMultiScheme(new CDRScheme());
+        
         KafkaSpout kafkaspout = new KafkaSpout(spoutConfig);
         return kafkaspout;
     }
@@ -105,13 +104,13 @@ public class CDRStormTopology {
         conf.setDebug(true);
         /* Set the number of workers that will be spun up for this topology. 
          * Each worker represents a JVM where executor thread will be spawned from */
-        Integer topologyWorkers = Integer.valueOf("cdrstorm.topologyworkers");
+        Integer topologyWorkers = Integer.valueOf(globalconfigs.getProperty("cdrstorm.topologyworkers"));
         conf.put(Config.TOPOLOGY_WORKERS, topologyWorkers);
 
         try {
             StormSubmitter.submitTopology("cdrstorm", conf, builder.createTopology());
         } catch (Exception e) {
-            LOG.error("Error submiting Topology", e);
+            logger.error("Error submiting Topology", e);
         }
     }
 

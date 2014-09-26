@@ -13,5 +13,11 @@
 ./kafka-console-consumer.sh --zookeeper localhost:2181 --topic twitter
 ./kafka-console-consumer.sh --zookeeper localhost:2181 --topic cdr
 
+#upload the uber jar and set permissions appropriately
+
+#Submit the topology, su to hdfs or a sufficiently privileged user
+storm jar cdrstorm-0.8.jar com.hortonworks.amuise.cdrstorm.storm.topologies.CDRStormTopology
+
 #Start the sample data streams (this is both CDR and Twitter feeds)
 java -cp ./cdrstorm-0.8.jar com.hortonworks.amuise.cdrstorm.kafka.producers.CDRTestDataProducer
+
