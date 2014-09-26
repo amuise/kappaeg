@@ -116,7 +116,7 @@ public class CDRTestDataProducer {
                 twitterproducer.send(twitterdata);
 
                 //call producer for cdr
-                KeyedMessage<String, String> cdrmessagedata = new KeyedMessage<String, String>(globalconfigs.getProperty("cdr.kafkatopic"), sb.toString());
+                KeyedMessage<String, String> cdrmessagedata = new KeyedMessage<String, String>(globalconfigs.getProperty("cdr.kafkatopic"),cdrmessage);
                 cdrproducer.send(cdrmessagedata);
 
             }

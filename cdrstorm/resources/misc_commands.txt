@@ -9,6 +9,9 @@
 ./kafka-topics.sh  --zookeeper localhost:2181 --create --topic cdr --partitions 3 --replication-factor 1
 ./kafka-topics.sh --zookeeper localhost:2181 --describe --topic cdr
 
+#monitor topics in separate console sessions
+./kafka-console-consumer.sh --zookeeper localhost:2181 --topic twitter
+./kafka-console-consumer.sh --zookeeper localhost:2181 --topic cdr
 
 #Start the sample data streams (this is both CDR and Twitter feeds)
 java -cp ./cdrstorm-0.8.jar com.hortonworks.amuise.cdrstorm.kafka.producers.CDRTestDataProducer

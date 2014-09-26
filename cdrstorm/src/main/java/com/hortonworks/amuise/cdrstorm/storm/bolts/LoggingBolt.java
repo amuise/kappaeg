@@ -42,7 +42,7 @@ public class LoggingBolt implements IRichBolt {
 
     @Override
     public void execute(Tuple tuple) {
-        logger.info("LoggingBolt processing tuple|" + tuple +"|");
+        logger.warn("LoggingBolt processing tuple|" + tuple +"|");
         outputcollector.ack(tuple);
     }
 

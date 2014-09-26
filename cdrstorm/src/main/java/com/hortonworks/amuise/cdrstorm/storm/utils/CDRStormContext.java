@@ -18,7 +18,8 @@ public class CDRStormContext {
     public CDRStormContext() {
 
         //TO-DO Implement a file based config file if you like...
-        //This stuff is hard coded in one place so you can extend it
+        //This stuff is hard coded in one place so you can extend it.
+        //Was thinking about dynamic config values for different environments.
         Properties configcontext = new Properties();
 
         //Twitter4j Producer 
@@ -28,16 +29,23 @@ public class CDRStormContext {
         configcontext.put("twitter4j.accesstokensecretkey", "GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W");
         configcontext.put("twitter4j.filterwords", "hadoop,hdfs,tez,hive,oozie,flume,kafka,mapreduce,knox,hortonworks");
         configcontext.put("twitter4j.kafkatopic", "twitter");
-        configcontext.put("twitter4j.brokerlist", "192.168.37.130:9092");
+        configcontext.put("twitter4j.brokerlist", "localhost:9092");
         configcontext.put("twitter4j.serializer", "kafka.serializer.StringEncoder");
         configcontext.put("twitter4j.requiredacks", "1");
 
-        //CDR Test Data Producer
+        //Kafka Spout info
+        configcontext.put("cdrstorm.kafkaspout.zkhosts", "localhost:2181");
+        configcontext.put("cdrstorm.kafkaspout.zkroot", "");
+        configcontext.put("cdrstorm.kafkaspout.cdr.consumergroupid", "group1");
+        configcontext.put("cdrstorm.kafkaspout.spout.thread.count", "1");
+        configcontext.put("cdrstorm.kafkaspout.bolt.thread.count", "2");
+
+        //CDR Test Data Producer 
         configcontext.put("cdr.kafkatopic", "cdr");
-        configcontext.put("cdr.brokerlist", "192.168.37.130:9092");
+        configcontext.put("cdr.brokerlist", "localhost:9092");
         configcontext.put("cdr.serializer", "kafka.serializer.StringEncoder");
         configcontext.put("cdr.requiredacks", "1");
-        configcontext.put("cdr.schema", "      subscriber_no  ,"
+        configcontext.put("cdr.schema", "subscriber_no,"
                 + "subscriber_no_char,"
                 + "record_sequence_number,"
                 + "served_imsi,"
@@ -74,7 +82,7 @@ public class CDRStormContext {
                 + "tracking_area_code,"
                 + "eutran_cellid,"
                 + "record_opening_date");
-        
+
         this.config = configcontext;
 
     }
