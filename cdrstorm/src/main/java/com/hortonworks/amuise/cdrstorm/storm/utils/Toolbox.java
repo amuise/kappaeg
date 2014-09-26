@@ -5,7 +5,11 @@
  */
 package com.hortonworks.amuise.cdrstorm.storm.utils;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.Proxy;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class Toolbox {
 
-    public ArrayList<String> extractURLfromString(String input) {
+    public static ArrayList<String> extractURLfromString(String input) {
 
         ArrayList<String> urls = new ArrayList<String>();
         // Pattern for recognizing a URL, based off RFC 3986
@@ -36,7 +40,7 @@ public class Toolbox {
         return urls;
     }
 
-    public String stripProtocolPrefix(String input) {
+    public static String stripProtocolPrefix(String input) {
 
         try {
             URI uri = new URI(input.toLowerCase().trim());
@@ -48,4 +52,24 @@ public class Toolbox {
 
         return null;
     }
+
+    public static void main(String[] args) {
+
+        String raw = "Elephant on the mainframe - #Hadoop and #BigData - get beyond all the hype, a good read http://t.co/uTxSamWnVM";
+        ArrayList<String> urls = extractURLfromString(raw);
+        for (String url : urls) {
+            System.out.println("domain found: " + stripProtocolPrefix(url));
+        }
+    }
+
+    public static String fullURL(String anyURL) throws IOException {
+        URL url = new URL(anyURL);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection(Proxy.NO_PROXY);
+        httpURLConnection.setInstanceFollowRedirects(false);
+        String finalURL = httpURLConnection.getHeaderField("Location");
+        httpURLConnection.disconnect();
+
+        return finalURL;
+    }
+
 }
