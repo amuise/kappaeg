@@ -23,10 +23,10 @@ public class CDRStormContext {
         Properties configcontext = new Properties();
 
         //Twitter4j Producer 
-        configcontext.put("twitter4j.consumerkey", "y4g8s2B7h0Wun80BIoEoriIMT");
-        configcontext.put("twitter4j.consumersecretkey", "7edLC5k2Wbz1TYMoeJL4OETgkntZa9r3XSyEeV2rFuqhbRFuRf");
-        configcontext.put("twitter4j.accesstokenkey", "14829490-ZQbxFrYMXbzbdg3w1ZjuCVJIWpDWcflxLbhGAdYfx");
-        configcontext.put("twitter4j.accesstokensecretkey", "GWegjsaUlQWQHGqTBvg09F1TrRC1ERLpIMkCociFDd48W");
+        configcontext.put("twitter4j.consumerkey", "");
+        configcontext.put("twitter4j.consumersecretkey", "");
+        configcontext.put("twitter4j.accesstokenkey", "");
+        configcontext.put("twitter4j.accesstokensecretkey", "");
         configcontext.put("twitter4j.filterwords", "hadoop,hdfs,tez,hive,oozie,flume,kafka,mapreduce,knox,hortonworks");
         configcontext.put("twitter4j.kafkatopic", "twitter");
         configcontext.put("twitter4j.brokerlist", "localhost:9092");
